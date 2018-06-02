@@ -12,12 +12,15 @@ public class Game {
 
 	public static void main(String[] args) {
 		Game.introduction();
+	//	Score.printScoreboard();
 		Game.loop();
 	}
 
 	private static void introduction()
 	{
 		System.out.println("Welkom bij Yahtzee! \n\rOm te beginnen met spelen, typ !start\nOm het overzicht van alle commando's te zien, typ !help");
+		//System.out.print("\033[H\033[2J");
+
 	}
 	
 	private static void loop()
@@ -72,6 +75,9 @@ public class Game {
 				{
 					getCurrentPlayer().lock(t);
 				}
+				break;
+			case "!score":
+				getCurrentPlayer().getScore().countEyes();
 		}
 		return true;
 	}
@@ -112,7 +118,8 @@ public class Game {
 	private static void help()
 	{
 		System.out.println("Alle commando's zijn als volgt: \r\n \r\n !start <aantal spelers> - Voorbeeld: !start 2 (start het spel met 2 spelers) - standaardwaarde is 1 speler");
-		System.out.println("!gooi - gooi alle niet-gelockte dobbelstenen.\n!lock <1-5> - Lock de dobbelsteen met positie X. Meerdere tegelijkertijd locken is ook mogelijk: !lock 1 3 5 om dobbelstenen met positie 1, 3 en 5 te locken. Gebruik dit commando ook om een dobbelsteen te un-locken.");
+		System.out.println("!gooi - gooi alle niet-gelockte dobbelstenen.\n!lock <1-5> - Lock de dobbelsteen met positie X. Meerdere tegelijkertijd locken is ook mogelijk: !lock 1 3 5 om dobbelstenen met positie 1, 3 en 5 te locken. Gebruik dit commando ook om een dobbelsteen te un-locken."
+				+"\n!score <speler-id> - vraag het score formulier van een bepaalde speler op. Leeg laten geeft de speler die nu aan de beurt is.");
 	}
 	
 	 public static boolean isInteger(String s) {

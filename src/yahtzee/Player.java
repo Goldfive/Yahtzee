@@ -1,7 +1,7 @@
 package yahtzee;
 
 public class Player {
-	private Score scoreList;
+	private Score score;
 	private Die[] dice = new Die[5];
 	public String name;
 	private int playerId;
@@ -16,10 +16,17 @@ public class Player {
 		{
 			dice[i] = new Die();
 		}
+		score = new Score(dice);
+	}
+	
+	public Score getScore()
+	{
+		return score;
 	}
 	
 	public void throwDice()
 	{
+		score.resetCounter();
 		System.out.print(name+" heeft gegooid: ");
 		for (Die d: dice)
 		{

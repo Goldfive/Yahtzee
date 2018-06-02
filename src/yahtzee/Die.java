@@ -5,7 +5,7 @@ import java.util.Random;
 
 public class Die {
 	private Random gen = new Random();
-	int value;
+	int value = 1;
 	private boolean locked = false;
 	
 	public void rollDie()
