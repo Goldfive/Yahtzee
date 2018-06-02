@@ -6,11 +6,16 @@ import java.util.Random;
 public class Die {
 	private Random gen = new Random();
 	int value;
-	boolean locked = false;
+	private boolean locked = false;
 	
 	public void rollDie()
 	{
-		this.value = gen.nextInt(6)-1;
+		this.value = gen.nextInt(6)+1;
+	}
+	
+	public boolean getLocked()
+	{
+		return this.locked;
 	}
 	
 	public int getValue()
@@ -21,5 +26,10 @@ public class Die {
 	public void changeDieState() //Locked goes to unlocked, unlocked to locked
 	{
 		this.locked = !this.locked;
+	}
+	
+	public void reset()
+	{
+		this.locked = false;
 	}
 }
