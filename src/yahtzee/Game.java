@@ -12,15 +12,12 @@ public class Game {
 
 	public static void main(String[] args) {
 		Game.introduction();
-	//	Score.printScoreboard();
 		Game.loop();
 	}
 
 	private static void introduction()
 	{
 		System.out.println("Welkom bij Yahtzee! \n\rOm te beginnen met spelen, typ !start\nOm het overzicht van alle commando's te zien, typ !help");
-		//System.out.print("\033[H\033[2J");
-
 	}
 	
 	private static void loop()
@@ -32,13 +29,15 @@ public class Game {
 			{
 				System.out.println("Speler "+(currentTurn+1)+" ("+players.get(currentTurn).name+") is nu aan de beurt! Gebruik !gooi om de dobbelstenen te gooien, !lock om dobbelstenen te locken en !score om je score ergens onder te brengen. Help: !help");
 				getCurrentPlayer().getScore().printScoreBoard();
+				getCurrentPlayer().printDice();
+				System.out.println("Aantal keer gooien: "+(2-getCurrentPlayer().getTurn()));
 			}
 				Continue = handleCommands(getArguments(readInput()));
 		}
 		sc.close(); //Close scanner at the end of the program
 	}
 	
-	private static String[] getArguments(String s) //Every word is its own command
+	public static String[] getArguments(String s) //Every word is its own command
 	{
 		String[] arr = s.split(" ");
 		return arr;
@@ -49,7 +48,7 @@ public class Game {
 		return sc.nextLine();
 	}
 	
-	private static boolean handleCommands(String[] t)
+	public static boolean handleCommands(String[] t)
 	{
 	
 		switch (t[0])
@@ -97,6 +96,13 @@ public class Game {
 				}
 				
 		}
+		if (getCurrentPlayer().getTurn() >= 2 && getCurrentPlayer().setScore)
+		{
+			if (getCurrentPlayer().getScore().allDone())
+				System.out.println("Alle vakjes zijn ingevuld - je bent klaar met spelen! Je kunt nog steeds je scoreformulier opvragen; als je een nieuw spel wilt starten, typ !start");
+			getCurrentPlayer().setTurn(0);
+			getCurrentPlayer().resetDice();
+		}
 		return true;
 	}
 	
@@ -137,7 +143,7 @@ public class Game {
 			getCurrentPlayer().resetTurn();
 			nextPlayer();
 		}
-		else if (getCurrentPlayer().nextTurn() == 0)
+		else if (getCurrentPlayer().getTurn() == 0)
 			nextPlayer();
 			
 	}
@@ -145,12 +151,11 @@ public class Game {
 	private static void nextPlayer()
 	{
 		
-		System.out.println(currentTurn);
 		if (currentTurn++ >= players.size()-1)
 		{
 			currentTurn = 0;
 		}
-		System.out.println(currentTurn);
+
 		boolean gameDone = true;
 		for (Player p: players)
 		{

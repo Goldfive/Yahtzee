@@ -8,6 +8,11 @@ public class Die {
 	int value = 1;
 	private boolean locked = false;
 	
+	Die()
+	{
+		rollDie();
+	}
+	
 	public void rollDie()
 	{
 		this.value = gen.nextInt(6)+1;

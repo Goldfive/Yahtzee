@@ -25,17 +25,47 @@ public class Player {
 		return score;
 	}
 	
-	public void throwDice()
+	public void printDice()
 	{
-		score.resetCounter();
 		System.out.print(name+" heeft gegooid: ");
 		for (Die d: dice)
-		{
-			if (!d.getLocked()) //If die is not locked
-				d.rollDie();
 			System.out.print((d.getLocked() ? "(" : "")+d.getValue()+(d.getLocked() ? ")" : "")+" ");
-		}
 		System.out.print("\r\n");
+	}
+	
+	public int getTurn()
+	{
+		return turn;
+	}
+	
+	public void resetDice()
+	{
+		for (Die d: dice) //Unlock all dice for next turn
+		{
+			d.reset();
+		}
+	}
+	
+	public void setTurn(int turn)
+	{
+		this.turn = turn;
+	}
+	
+	public void throwDice()
+	{
+		if (turn == 0)
+			setScore = false;
+		if (turn >= 2)
+			System.out.println("Je hebt al 3x gegooid. Vul een score in op het scoreblaadje.");
+		else
+		{
+			score.resetCounter();
+			for (Die d: dice)
+				if (!d.getLocked()) //If die is not locked
+					d.rollDie();
+			printDice();
+			nextTurn();
+		}
 	}
 	
 	public void lock(String[] t)
@@ -58,28 +88,7 @@ public class Player {
 		this.turn = 0;
 	}
 	
-	public int nextTurn() {
-		this.turn++;
-		if (turn >= 3)
-		{
-			while (!setScore)
-			{
-				System.out.println("Je moet je score nog in een vakje zetten. Typ 1 t/m 13 om je score in het daardoor bestemde vakje te plaatsen.");
-				String subs = Game.readInput();
-				if (!Game.isInteger(subs))
-					System.out.println("Stout! Dat is geen getal!");
-				else
-					setScore = score.setScore(Integer.parseInt(subs));
-			}
-			if (score.allDone())
-				System.out.println("Alle vakjes zijn ingevuld - je bent klaar met spelen! Je kunt nog steeds je scoreformulier opvragen; als je een nieuw spel wilt starten, typ !start");
-			turn = 0;
-			for (Die d: dice) //Unlock all dice for next turn
-			{
-				d.reset();
-			}
-		}
-		
-		return turn;
+	public int nextTurn() {;	
+		return turn++;
 	}
 }

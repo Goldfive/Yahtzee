@@ -1,7 +1,6 @@
 package yahtzee;
 
 import java.util.Arrays;
-import java.util.stream.IntStream;
 
 public class Score {
 	
@@ -22,7 +21,7 @@ public class Score {
 				+ "\n(4) Vieren: "+showScore(4)+"     (10) Grote straat: "+showScore(10)
 				+ "\n(5) Vijven: "+showScore(5)+"     (11) Full House: "+showScore(11)
 				+ "\n(6) Zessen: "+showScore(6)+"     (12) Kans: "+showScore(12)
-				+ "\n                 (13) Yahtzee: "+showScore(13)
+				+ "\n                  (13) Yahtzee: "+showScore(13)
 				+ "\n-----------------------------------------"
 				+ "\nPunten:  "+showScore(14)+"        - Punten: "+showScore(16)
 				+ "\nTot bonus: "+showScore(15)+""
