@@ -29,8 +29,11 @@ public class Game {
 		while (Continue)
 		{
 			if (activeGame)
-				System.out.println("Speler "+(currentTurn+1)+" ("+players.get(currentTurn).name+") is nu aan de beurt! Gebruik !gooi om de dobbelstenen te gooien!");
-			Continue = handleCommands(getArguments(readInput()));
+			{
+				System.out.println("Speler "+(currentTurn+1)+" ("+players.get(currentTurn).name+") is nu aan de beurt! Gebruik !gooi om de dobbelstenen te gooien, !lock om dobbelstenen te locken en !score om je score ergens onder te brengen. Help: !help");
+				getCurrentPlayer().getScore().printScoreBoard();
+			}
+				Continue = handleCommands(getArguments(readInput()));
 		}
 		sc.close(); //Close scanner at the end of the program
 	}
@@ -41,7 +44,7 @@ public class Game {
 		return arr;
 	}
 	
-	private static String readInput()
+	static String readInput()
 	{
 		return sc.nextLine();
 	}
@@ -68,6 +71,7 @@ public class Game {
 					getCurrentPlayer().throwDice();
 					nextTurn();
 				}
+				break;
 			case "!lock":
 				if (!activeGame)
 					System.out.println("Er is nog geen game gestart. Start een game met !start");
@@ -76,8 +80,22 @@ public class Game {
 					getCurrentPlayer().lock(t);
 				}
 				break;
+			case "!overview":
+				if (t.length > 1 && !Game.isInteger(t[1]))
+					getCurrentPlayer().getScore().printScoreBoard();
+				else
+					getPlayerById(Integer.parseInt(t[1])-1).getScore().printScoreBoard();
+				break;
 			case "!score":
-				getCurrentPlayer().getScore().countEyes();
+				if (!Game.isInteger(t[1]))
+					System.out.println("Stout! Dat is geen getal!");
+				else
+				{
+					getCurrentPlayer().setScore = getCurrentPlayer().getScore().setScore(Integer.parseInt(t[1]));
+					
+					nextTurn();
+				}
+				
 		}
 		return true;
 	}
@@ -87,8 +105,19 @@ public class Game {
 		return players.get(currentTurn);
 	}
 	
+	private static Player getPlayerById(int id)
+	{
+		for (Player p: players)
+		{
+			if (p.playerId == id)
+				return p;
+		}
+		return null;
+	}
+	
 	private static void start(int totalPlayers)
 	{
+		players.clear();
 		for (int i = 0; i < totalPlayers && totalPlayers <= maxPlayers; i++)
 		{
 			System.out.println("Speler "+(i+1)+", onder welke naam gaat u proberen de highscore te doorbreken?");
@@ -102,24 +131,66 @@ public class Game {
 	
 	private static void nextTurn()
 	{
-		if (getCurrentPlayer().nextTurn() == 0)
+		
+		if (getCurrentPlayer().setScore)
+		{
+			getCurrentPlayer().resetTurn();
 			nextPlayer();
+		}
+		else if (getCurrentPlayer().nextTurn() == 0)
+			nextPlayer();
+			
 	}
 	
 	private static void nextPlayer()
 	{
-		currentTurn++;
-		if (currentTurn >= players.size()-1)
+		
+		System.out.println(currentTurn);
+		if (currentTurn++ >= players.size()-1)
 		{
 			currentTurn = 0;
 		}
+		System.out.println(currentTurn);
+		boolean gameDone = true;
+		for (Player p: players)
+		{
+			if (!p.getScore().allDone())
+				gameDone = false;
+		}
+		if (gameDone)
+		{
+			activeGame = false;
+			int[] scores = new int[players.size()];
+			for (Player p: players)
+			{
+				scores[p.playerId] = p.getScore().getTotalScore();
+			}
+			System.out.println(players.get(Game.getIndexOfLargest(scores)).name+" heeft de hoogste score met "+players.get(Game.getIndexOfLargest(scores)).getScore().getTotalScore());
+		}
 	}
+	
+
+
+	public static int getIndexOfLargest( int[] array )
+	{
+	  if ( array == null || array.length == 0 ) return -1; // null or empty
+	
+	  int largest = 0;
+	  for ( int i = 1; i < array.length; i++ )
+	  {
+	      if ( array[i] > array[largest] ) largest = i;
+	  }
+	  return largest; // position of the first largest found
+	}
+
+
 	
 	private static void help()
 	{
 		System.out.println("Alle commando's zijn als volgt: \r\n \r\n !start <aantal spelers> - Voorbeeld: !start 2 (start het spel met 2 spelers) - standaardwaarde is 1 speler");
 		System.out.println("!gooi - gooi alle niet-gelockte dobbelstenen.\n!lock <1-5> - Lock de dobbelsteen met positie X. Meerdere tegelijkertijd locken is ook mogelijk: !lock 1 3 5 om dobbelstenen met positie 1, 3 en 5 te locken. Gebruik dit commando ook om een dobbelsteen te un-locken."
-				+"\n!score <speler-id> - vraag het score formulier van een bepaalde speler op. Leeg laten geeft de speler die nu aan de beurt is.");
+				+"\n!overview <speler-id> - vraag het score formulier van een bepaalde speler op. Leeg laten geeft de speler die nu aan de beurt is."
+				+ "\n!score <1 t/m 13> - zet je score neer in het daarvoor bestemde vakje. Dit commando eindigt je beurt.");
 	}
 	
 	 public static boolean isInteger(String s) {

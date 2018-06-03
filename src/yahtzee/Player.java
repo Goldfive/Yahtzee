@@ -4,8 +4,9 @@ public class Player {
 	private Score score;
 	private Die[] dice = new Die[5];
 	public String name;
-	private int playerId;
+	public int playerId;
 	private int turn = 0;
+	public boolean setScore = false;
 	
 	Player(String name, int pId)
 	{
@@ -41,15 +42,37 @@ public class Player {
 	{
 		for (int i = 1; i < t.length; i++)
 		{
+			if (Integer.parseInt(t[i]) > 5)
+				t[i] = "5";
 			dice[Integer.parseInt(t[i])-1].changeDieState();
 		}
+		for (Die d: dice)
+		{
+			System.out.print((d.getLocked() ? "(" : "")+d.getValue()+(d.getLocked() ? ")" : "")+" ");
+		}
+		System.out.print("\n\r");
 	}
 
+	public void resetTurn()
+	{
+		this.turn = 0;
+	}
+	
 	public int nextTurn() {
 		this.turn++;
 		if (turn >= 3)
 		{
-			System.out.println("Jouw beurt is nu over. Kies een score optie.");
+			while (!setScore)
+			{
+				System.out.println("Je moet je score nog in een vakje zetten. Typ 1 t/m 13 om je score in het daardoor bestemde vakje te plaatsen.");
+				String subs = Game.readInput();
+				if (!Game.isInteger(subs))
+					System.out.println("Stout! Dat is geen getal!");
+				else
+					setScore = score.setScore(Integer.parseInt(subs));
+			}
+			if (score.allDone())
+				System.out.println("Alle vakjes zijn ingevuld - je bent klaar met spelen! Je kunt nog steeds je scoreformulier opvragen; als je een nieuw spel wilt starten, typ !start");
 			turn = 0;
 			for (Die d: dice) //Unlock all dice for next turn
 			{
